@@ -9,8 +9,13 @@ namespace UmlToCSharp
 {
     public class UmlData
     {
-        private const string _testUmlInput =
-@"entity Document <Документ> <<Lookup, Workflow>> {
+        private string _classTemplate = @"public class umlClassName : BaseObject umlInterfaces
+{
+    umlProps
+}";
+        private string _propTemplate = @"public umlTypeProp umlNameProp { get; set; }";
+
+        private const string _testUmlInput = @"entity Document <Документ> <<Lookup, Workflow>> {
     +Title*: string[255] <Наименование>
     +Description: text <Описание>   
     -Creator: User <Автор>   
@@ -45,6 +50,15 @@ Document::Type --> DocumentType
 Document::Status ..> DocumentStatus
 Document::Items *- DocumentItem";
 
+        private const string _relationshipsPattern =
+            @"(.+)::(.+)\s(\*-|..>)\s(.+)";
+
+        private const string _entitiesPattern =
+            @"entity\s(.+)\s<(.+)>(\s<<((.+),[\s]?){0,}>>)?(\G(\u002b|\u002d)(.+)[\u002a]?:\s(.+)(\s<(.+)>)?){1,}}";
+
+        private const string _notesPattern =
+            @"note\s(left|right)\sof\s(.+)::(.+)\n(.+)\nend note";
+
         public UmlData(string input = _testUmlInput)
         {
             Input = input;
@@ -60,40 +74,23 @@ Document::Items *- DocumentItem";
         public IReadOnlyCollection<string> Notes { get; private set; }
 
         private void SetInputLines()
-        {
-            InputLines = new List<string>(Regex.Split(Input, Environment.NewLine));
-        }
+            => InputLines = new List<string>(Regex.Split(Input, Environment.NewLine));
 
         public bool IsRelationshipsValid()
-        {
-            //string currentInput = "Document::Type --> DocumentType";
-            string pattern = @"(.+)::(.+)\s(\*-|..>)\s(.+)";
-            var result = true;
-            foreach (var relationship in Relationships)
-            {
-                if (!Regex.IsMatch(relationship, pattern))
-                    result = false;
-            }
-            return result;
-        }
+            => Relationships.All(rs => Regex.IsMatch(rs, _relationshipsPattern));
 
         public bool IsEntitiesValid()
+            => Entities.All(e => Regex.IsMatch(e, _entitiesPattern));
+
+        public bool IsNotesValid()
+            => Notes.All(n => Regex.IsMatch(n, _notesPattern));
+
+        public void EntityInfo()
         {
-            string entity = "+Name*: string[100] <Наименование>";
-            string pattern = @"((\u002b|\u002d)(.+)[\u002a]?:\s(.+)(\s<(.+)>)?)";
+            var newClaccStr = _classTemplate;
+            var currentEntity = Entities.FirstOrDefault();
+            var entityName = Regex.Match(input: currentEntity, pattern: @"entity\s([^\s]+)").Groups[1].Value;
 
-            var result = true;
-            /*
-            foreach (var entity in Entities)
-            {
-                if (!Regex.IsMatch(entity, pattern))
-                    result = false;
-            }
-            */
-
-            result = Regex.IsMatch(entity, pattern);
-
-            return result;
         }
 
         private void SetNodes()
