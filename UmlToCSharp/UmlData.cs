@@ -88,9 +88,12 @@ Document::Items *- DocumentItem";
         public void EntityInfo()
         {
             var newClaccStr = _classTemplate;
-            var currentEntity = Entities.FirstOrDefault();
-            var entityName = Regex.Match(input: currentEntity, pattern: @"entity\s([^\s]+)").Groups[1].Value;
-
+            var res = Entities.Select(e => new EntityToClass(e).ToString());
+            var res1 =Enums.Select(e => new UmlEnum(e).ToString());
+            foreach (var item in res)
+            {
+                Console.WriteLine(item);
+            };
         }
 
         private void SetNodes()

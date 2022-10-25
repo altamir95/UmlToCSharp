@@ -7,6 +7,4 @@ using UmlToCSharp;
 
 var umlData = new UmlData();
 umlData.EntityInfo();
-var y = new EntityToClass("");
-y.ToCSharpType();
 Console.WriteLine("Hello, World!");
