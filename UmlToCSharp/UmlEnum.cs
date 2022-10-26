@@ -9,7 +9,6 @@ namespace UmlToCSharp
 
         public Regex Regex = new Regex(pattern: @"enum\s([^<\s]+)\s(<([^{<>]+)>\s)?{\n([^\n{}]+\n){0,}}");
 
-
         public string EnumStr { get; set; }
 
         public string Name { get; set; }
@@ -36,6 +35,6 @@ namespace UmlToCSharp
         public override string ToString() =>
             _template
             .Replace("uml_name", Name)
-            .Replace("uml_enum_values", string.Join(",\n", Indexes));
+            .Replace("uml_enum_values", string.Join(",", Indexes));
     }
 }
