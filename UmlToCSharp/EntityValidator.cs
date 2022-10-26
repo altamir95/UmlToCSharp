@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using R = System.Text.RegularExpressions.Regex;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace UmlToCSharp
 {
@@ -11,72 +13,108 @@ namespace UmlToCSharp
     {
         public void Test()
         {
-            new EntityValidator("")
-                .IsNameEntityStartWithEngUpperLatter()
-                .IsEntityNameOnlyEngLetterAndDigit();
+            Console.WriteLine(new EntityValidator("").IsValid().ValidationResult());
 
         }
     }
 
-    public class EntityValidator : BaseUmlValidator
+    public class EntityValidator
     {
-        public EntityValidator(string uml) : base(uml)
+        //(^entity)(\s+)([A-Z][A-Za-z0-9]+)(\s+)(<[a-zA-Zа-яА-Я0-9\s,.!?()']+>)(\s+)(<<(\s+)?[A-Z][A-Za-z0-9]+(\s+)?(,(\s+)?[A-Z][A-Za-z0-9]+(\s+)?){0,}>>)(\s+)({)(?<props>[^}]+)(})
+        private string error;
+
+        private static PatternItem Space(string l) => new(new(@"\s+"), $"После {l} должно быть пространство");
+
+        private static readonly PatternItem _base = new(new(@"^entity"), "Срока должн начинаться с entity");
+        private static readonly PatternItem _entityName = new(new(@"[A-Z][A-Za-z0-9]+"), "Срока должн начинаться с entity и должна быть отделена прабелом от назавния");
+        private static readonly PatternItem _entityComment = new(new(@"<[a-zA-Zа-яА-Я0-9\s,.!?()']+>"), "Комментарий должеть быть обурнут в <КОММЕНТАРИЙ>, содержать русские или английсике буквы, а так же может содержаьб следующие символы:?, !, (, ), '");
+        private static readonly PatternItem _interfaces = new(new(@"<<(\s+)?[A-Z][A-Za-z0-9]+(\s+)?(,(\s+)?[A-Z][A-Za-z0-9]+(\s+)?){0,}>"), "Интерфейсы должны быть указаны в скобках (<<интерфейсы>>), а так же должныть быть перечислены через запятую и иметь корректное для интерфейса наименование");
+        private static readonly PatternItem _openBrace = new(new(@"{"), "Ожидаеться открывающая фигурная скобка");
+        private static readonly PatternItem _entityInner = new(new(@"(?<props>[^}]+)"), "Сущность пуста");
+        private static readonly PatternItem _closeBrace = new(new(@"}"), "Ожидаеться закрывающая фигурная скобка");
+
+        private static readonly PatternItem _propReadOnlyState = new(new(@"^(\+|\-)"), "TODO");
+        private static readonly PatternItem _propName = new(new(@"[A-Z][A-Za-z0-9]+"), "TODO");
+        private static readonly PatternItem _propRequiredState = new(new(@"(\*)?"), "");
+        private static readonly PatternItem _doubleDot = new(new(@":"), "Ожидаеться двоеточие");
+
+        public readonly PatternItem[] entityPatterns = new[]
         {
-        }
+            _base,
+            Space("entity"),
+            _entityName,
+            Space("entity"),
+            _entityComment,
+            Space("entity"),
+            _interfaces,
+            Space("entity"),
+            _openBrace,
+            _entityInner,
+            _closeBrace
+        };
 
-        public void Foo()
+        public readonly PatternItem[] propertyPatterns = new[]
         {
+            _propReadOnlyState,
+            _propName,
+            _propRequiredState,
+            _doubleDot,
+            Space("двоеточие"),
 
-        }
-    }
+        };
 
-    public class BaseUmlValidator
-    {
-        public List<string> Errors { get; set; } = new List<string>();
         public string Uml { get; set; }
-        public BaseUmlValidator(string uml)
+        public EntityValidator(string uml)
         {
             Uml = uml;
+
         }
 
-        public BaseUmlValidator IsNameEntityStartWithEngUpperLatter()
+        public EntityValidator IsValid()
         {
-            var isValid = new Regex(@"^entity\s+[A-Z]").IsMatch(Uml);
-            if (!isValid)
-                Errors.Add("Назавние сущности должно начинаться с заглавной английской буквы");
+            StringBuilder currentPattern = new StringBuilder("");
+            Match currentMatch = null;
+            for (int i = 0; i < entityPatterns.Length; i++)
+            {
+                currentPattern.Append(entityPatterns[i].Pattern);
+                if ((currentMatch = R.Match(Uml, currentPattern.ToString())).Value == "") { error = entityPatterns[i].Message; return this; }
+            }
+            IsPropsValid(currentMatch.Groups["props"].Value);
+
             return this;
         }
 
-        public BaseUmlValidator IsEntityNameOnlyEngLetterAndDigit()
+        private void IsPropsValid(string props)
         {
-            var isValid = new Regex(@"^entity\s+[A-Za-z0-9]+\s").IsMatch(Uml);
-            if (!isValid)
-                Errors.Add("Назавние сущности должно состоять только из английских букв и цифр");
-            return this;
+            //(^(\+|\-))([A-Z][A-Za-z0-9]+)(\*)?(:)(\s+)([A-Za-z0-9]+\[[0-9]\])
+            var propLines = new List<string>(R.Split(props, Environment.NewLine));
+
+            foreach (var prop in propLines)
+            {
+                var propAfterTrim = prop.Trim();
+                if (string.IsNullOrWhiteSpace(propAfterTrim) || string.IsNullOrEmpty(propAfterTrim)) continue;
+
+                var currentPattern = new StringBuilder("");
+                for (int i = 0; i < propertyPatterns.Length; i++)
+                {
+                    currentPattern.Append(propertyPatterns[i].Pattern);
+                    if (R.Match(prop, currentPattern.ToString()).Value == "") { error = propertyPatterns[i].Message; return; }
+                }
+            }
         }
 
-        public BaseUmlValidator IsCommentCorrect()
+        public string ValidationResult() => error;
+    }
+
+    public class PatternItem
+    {
+        public PatternItem(R regex, string message)
         {
-            var isValid = new Regex(@"^entity\s+.+\s<[^<>]+>").IsMatch(Uml);
-            if (!isValid)
-                Errors.Add("У сущности обязательно должен быть комментарий в котором нет символов:'<','>'.");
-            return this;
+            Message = message;
+            Pattern = regex;
         }
 
-        public BaseUmlValidator IsInterfacesCorrect()
-        {
-            var isValid = new Regex(@"^entity\s+.+\s<[^<>]+>\s+(<<([\s]{0,}[A-Z][A-Za-z0-9]+)?([\s]{0,},[\s]{0,}[A-Z][A-Za-z0-9]+[\s]{0,})+?>>)?").IsMatch(Uml);
-            if (!isValid)
-                Errors.Add("Если у сущности есть интерфейсы то они обязательно должены быть разделены запятыми, состаять только из букв и цифр а так же наинаться с большой бкувы");
-            return this;
-        }
-
-        public BaseUmlValidator IsInterfacesCorrect()
-        {
-            var isValid = new Regex(@"").IsMatch(Uml);
-            if (!isValid)
-                Errors.Add("");
-            return this;
-        }
+        public R Pattern { get; private set; }
+        public string Message { get; private set; }
     }
 }
