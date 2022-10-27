@@ -46,5 +46,19 @@
         {
             Patterns.Dictionary[PattternKeys.ObjectName]
         };
+
+        public static readonly PatternItem[] relationshipPatternParts = new[]
+        {
+            Patterns.Dictionary[PattternKeys.ObjectName],
+            Patterns.Dictionary[PattternKeys.DoubleDot],
+            Patterns.Dictionary[PattternKeys.DoubleDot],
+            Patterns.Dictionary[PattternKeys.ObjectName],
+            Patterns.Dictionary[PattternKeys.Space],
+            Patterns.Dictionary[PattternKeys.RelationshipSymbol],
+            Patterns.Dictionary[PattternKeys.Space],
+            Patterns.Dictionary[PattternKeys.ObjectName],
+        };
+
+        public static string ToString(this PatternItem[] parts) => string.Join(string.Empty, parts.Select(r => r.Pattern));
     }
 }

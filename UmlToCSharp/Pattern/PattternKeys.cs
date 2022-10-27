@@ -17,6 +17,8 @@
 
         PropReadOnlyState,
         PropRequiredState,
-        PropType
+        PropType,
+
+        RelationshipSymbol
     }
 }

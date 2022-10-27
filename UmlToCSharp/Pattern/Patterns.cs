@@ -31,7 +31,7 @@
             },
             { PattternKeys.ObjectName,
                 new (
-                    regex: new(@"[A-Z][A-Za-z0-9]+"),
+                    regex: new(@"(?<object_name>[A-Z][A-Za-z0-9]+)"),
                     message: "Намиенование должно состоять из букв и цифр")
             },
             { PattternKeys.ObjectInner,
@@ -70,6 +70,13 @@
                 new (
                     regex: new(@"[A-Za-z0-9]+(\[([0-9]+)?\])?"),
                     message: "Тип не соответсвует правилу наименаниятипов")
+            },
+
+
+            { PattternKeys.RelationshipSymbol,
+                new (
+                    regex: new(@"(-->|\.\.>|\*-)"),
+                    message: "Ожидеяться один из следующих сиволов: '-->', '..>', '*-'")
             },
         };
     }

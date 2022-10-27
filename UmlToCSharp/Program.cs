@@ -36,5 +36,8 @@ Console.WriteLine("Hello, World!");
 var r1 = new EnumValidator(enumUml);
 r1.IsValid();
 Console.WriteLine(r1.Error);
+var r2 = new RelationshipValidator("Document::Type --> DocumentType");
+r2.IsValid();
+Console.WriteLine(r2.Error);
 
 Console.WriteLine("Hello, World!");

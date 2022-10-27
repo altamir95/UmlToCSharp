@@ -14,6 +14,7 @@ namespace UmlToCSharp
             SetName();
             SetInterfaces();
         }
+
         public string Entity { get; private set; }
         public string UmlType { get; private set; }
         public string Name { get; private set; }
