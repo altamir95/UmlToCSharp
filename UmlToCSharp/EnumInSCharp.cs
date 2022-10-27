@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace UmlToCSharp
 {
-    public class UmlEnum
+    public class EnumInSCharp
     {
         private const string _template = "public enum uml_name\n    {\n        uml_enum_values\n    }";
 
@@ -15,7 +15,7 @@ namespace UmlToCSharp
 
         public List<string> Indexes { get; set; }
 
-        public UmlEnum(string enumStr)
+        public EnumInSCharp(string enumStr)
         {
             EnumStr = enumStr;
             SetName();

@@ -2,7 +2,7 @@
 
 namespace UmlToCSharp
 {
-    public class EntityToClass
+    public class EntityInCSharp
     {
         private const string _classTemplate = "public class umlClassName : BaseObject umlInterfaces\n{\numlProps\n}";
         public string Entity { get; private set; }
@@ -12,7 +12,7 @@ namespace UmlToCSharp
         public string Interfaces { get; private set; }
         public List<string> Props { get; private set; }
 
-        public EntityToClass(string entity)
+        public EntityInCSharp(string entity)
         {
             Entity = entity;
             SetPropsInMatch();
