@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UmlToCSharp
+﻿namespace UmlToCSharp.Pattern
 {
     public enum PattternKeys
     {
@@ -13,14 +7,15 @@ namespace UmlToCSharp
         OpenBrace,
         CloseBrace,
         DoubleDot,
+        ObjectName,
+        ObjectInner,
+
+        EnumBase,
 
         EntityBase,
-        EntityName,
         EntityInterfaces,
-        EntityInner,
 
         PropReadOnlyState,
-        PropName,
         PropRequiredState,
         PropType
     }

@@ -5,12 +5,6 @@ namespace UmlToCSharp
     public class EntityInCSharp
     {
         private const string _classTemplate = "public class umlClassName : BaseObject umlInterfaces\n{\numlProps\n}";
-        public string Entity { get; private set; }
-        public MatchCollection PropsInMatch { get; private set; }
-        public string UmlType { get; private set; }
-        public string Name { get; private set; }
-        public string Interfaces { get; private set; }
-        public List<string> Props { get; private set; }
 
         public EntityInCSharp(string entity)
         {
@@ -20,6 +14,12 @@ namespace UmlToCSharp
             SetName();
             SetInterfaces();
         }
+        public string Entity { get; private set; }
+        public string UmlType { get; private set; }
+        public string Name { get; private set; }
+        public string Interfaces { get; private set; }
+        public MatchCollection PropsInMatch { get; private set; }
+        public List<string> Props { get; private set; }
 
         public void SetPropsInMatch()
         {
@@ -48,6 +48,5 @@ namespace UmlToCSharp
             .Replace("umlClassName", Name)
             .Replace("umlInterfaces", Interfaces)
             .Replace("umlProps", string.Join(Environment.NewLine, Props));
-
     }
 }

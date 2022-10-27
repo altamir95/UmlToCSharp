@@ -1,16 +1,16 @@
-﻿using R = System.Text.RegularExpressions.Regex;
+﻿using System.Text.RegularExpressions;
 
-namespace UmlToCSharp
+namespace UmlToCSharp.Pattern
 {
     public class PatternItem
     {
-        public PatternItem(R regex, string message)
+        public PatternItem(Regex regex, string message)
         {
             Message = message;
             Pattern = regex;
         }
 
-        public R Pattern { get; private set; }
+        public Regex Pattern { get; private set; }
         public string Message { get; private set; }
     }
 }

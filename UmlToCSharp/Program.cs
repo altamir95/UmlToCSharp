@@ -3,8 +3,9 @@
 // See https://gitlab.pba.su/visary/issues/-/wikis/domain-plantuml
 // See https://www.cisa.gov/uscert/ncas/tips/ST04-015
 using UmlToCSharp;
+using UmlToCSharp.Validators;
 
- string t =
+string t =
 @"entity Document <Документ> <<Lookup, Workflow>> {
 +Title*: string[255] <Наименование>
 +Description: text <Описание>   
@@ -17,10 +18,23 @@ using UmlToCSharp;
 +Files: file[] <Файлы>
 }";
 
+string enumUml =
+@"enum DocumentStatus <Статус документа> {
+Active
+Canceled
+}";
+
 
 //var umlData = new UmlData();
 //umlData.EntityInfo();
+var r = new EntityValidator(t);
+r.IsValid();
+Console.WriteLine(r.Error);
 
-Console.WriteLine(new EntityValidator(t).IsValid().ValidationResult());
+Console.WriteLine("Hello, World!");
+
+var r1 = new EnumValidator(enumUml);
+r1.IsValid();
+Console.WriteLine(r1.Error);
 
 Console.WriteLine("Hello, World!");
