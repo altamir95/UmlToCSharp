@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using UmlToCSharp.Parsers;
 
 namespace UmlToCSharp
 {
@@ -69,7 +70,7 @@ Document::Items *- DocumentItem";
 
         public void EntityInfo()
         {
-            var res = Entities.Select(e => new EntityInCSharp(e).ToString());
+            var res = Entities.Select(e => new EntityParser(e).ToString());
             var res1 = Enums.Select(e => new EnumInSCharp(e).ToString());
             foreach (var item in res)
             {

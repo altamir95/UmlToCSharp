@@ -1,6 +1,6 @@
 ﻿namespace UmlToCSharp.Pattern
 {
-    public class PatternParts
+    public static class PatternParts
     {
         public static readonly PatternItem[] entityPatternParts = new[]
         {

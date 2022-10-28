@@ -24,7 +24,7 @@ namespace UmlToCSharp.Parsers
             var pattern = PatternParts.ToString(PatternParts.entityPatternParts);
             var propPattern = PatternParts.ToString(PatternParts.propertyPatternParts);
 
-            var innerArray = Regex.Matches(Entity, propPattern).Select(s => new UmlProp(s.Value).ToString());
+            var innerArray = Regex.Matches(Entity, propPattern).Select(s => new PropertyParser(s.Value).ToString());
 
             return _classTemplate
               .Replace("umlClassName", GetInnerGroupFromUml("object_name", pattern))

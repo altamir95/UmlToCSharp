@@ -11,7 +11,7 @@
             },
             { PattternKeys.Comment,
                 new (
-                    regex: new(@"<[a-zA-Zа-яА-Я0-9\s,.!?()']+>"),
+                    regex: new(@"(?<comment><[a-zA-Zа-яА-Я0-9\s,.!?()']+>)"),
                     message: "Комментарий должеть быть обурнут в <КОММЕНТАРИЙ>, содержать русские или английсике буквы, а так же может содержаьб следующие символы:?, !, (, ), '")
             },
             { PattternKeys.OpenBrace,
@@ -56,22 +56,22 @@
                     regex: new(@"<<(\s+)?[A-Z][A-Za-z0-9]+(\s+)?(,(\s+)?[A-Z][A-Za-z0-9]+(\s+)?){0,}>>"),
                     message: "Интерфейсы должны быть указаны в скобках (<<интерфейсы>>), а так же должныть быть перечислены через запятую и иметь корректное для интерфейса наименование")
             },
+
             { PattternKeys.PropReadOnlyState,
                 new (
-                    regex: new(@"^(\+|\-)"),
+                    regex: new(@"(?<read_only>^(\+|\-))"),
                     message: "Поле должно наинаться с указателяна статус 'ReadOnly', это символы: +, -.")
             },
             { PattternKeys.PropRequiredState,
                 new (
-                    regex: new(@"(\*)?"),
+                    regex: new(@"(?<required>(\*)?)"),
                     message: "")
             },
             { PattternKeys.PropType,
                 new (
-                    regex: new(@"[A-Za-z0-9]+(\[([0-9]+)?\])?"),
+                    regex: new(@"(?<prop_type>[A-Za-z0-9]+(\[([0-9]+)?\])?)"),
                     message: "Тип не соответсвует правилу наименаниятипов")
             },
-
 
             { PattternKeys.RelationshipSymbol,
                 new (
