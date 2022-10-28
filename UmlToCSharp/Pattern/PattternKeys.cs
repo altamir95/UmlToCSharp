@@ -11,6 +11,7 @@
         ObjectInner,
 
         EnumBase,
+        EnumItems,
 
         EntityBase,
         EntityInterfaces,

@@ -21,20 +21,19 @@ namespace UmlToCSharp.Parsers
 
         public override string ToString()
         {
-            var pattern = PatternParts.ToString(PatternParts.entityPatternParts);
             var propPattern = PatternParts.ToString(PatternParts.propertyPatternParts);
 
             var innerArray = Regex.Matches(Entity, propPattern).Select(s => new PropertyParser(s.Value).ToString());
 
             return _classTemplate
-              .Replace("umlClassName", GetInnerGroupFromUml("object_name", pattern))
-              .Replace("umlInterfaces", GetInnerGroupFromUml("interfaces", pattern))
+              .Replace("umlClassName", GetInnerGroupFromUml("object_name"))
+              .Replace("umlInterfaces", GetInnerGroupFromUml("interfaces"))
               .Replace("umlProps", string.Join(Environment.NewLine, innerArray));
         }
 
-        protected string GetInnerGroupFromUml(string groupName, string pattern)
+        protected string GetInnerGroupFromUml(string groupName)
         {
-            return Regex.Match(Entity, pattern).Groups[groupName].Value;
+            return Regex.Match(Entity, PatternParts.ToString(PatternParts.entityPatternParts)).Groups[groupName].Value;
         }
     }
 }

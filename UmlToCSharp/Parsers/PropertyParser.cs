@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using UmlToCSharp.Pattern;
 
-namespace UmlToCSharp
+namespace UmlToCSharp.Parsers
 {
     public class PropertyParser
     {
@@ -12,11 +12,11 @@ namespace UmlToCSharp
         }
 
         public string Type { get; set; }
-        public List<string> Attributes { get; set; } = new List<string>();
-        public bool ReadOnly { get; set; }
         public string Name { get; set; }
-        public bool Required { get; set; }
         public string Comment { get; set; }
+        public bool ReadOnly { get; set; }
+        public bool Required { get; set; }
+        public List<string> Attributes { get; set; } = new List<string>();
 
         private void SetPropsFromUml(string umlProp)
         {

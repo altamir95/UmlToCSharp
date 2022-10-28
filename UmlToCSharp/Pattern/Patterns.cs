@@ -45,6 +45,11 @@
                     regex: new(@"^enum"),
                     message: "Срока должн начинаться с enum")
             },
+            { PattternKeys.EnumItems,
+                new (
+                    regex: new(@"(?<enum_item>[A-Za-z0-9]+\s*\n)"),
+                    message: "Объект пуст")
+            },
 
             { PattternKeys.EntityBase,
                 new (

@@ -71,7 +71,7 @@ Document::Items *- DocumentItem";
         public void EntityInfo()
         {
             var res = Entities.Select(e => new EntityParser(e).ToString());
-            var res1 = Enums.Select(e => new EnumInSCharp(e).ToString());
+            var res1 = Enums.Select(e => new EnumParser(e).ToString());
             foreach (var item in res)
             {
                 Console.WriteLine(item);
