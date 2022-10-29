@@ -6,34 +6,45 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using UmlToCSharp.Pattern;
+using UmlToCSharp.Utils;
 
 namespace UmlToCSharp.Parsers
 {
     public class EntityParser
     {
-        private const string _classTemplate = "public class umlClassName : BaseObject umlInterfaces\n{\numlProps\n}";
+        private const string _classTemplate = "public class umlClassName : BaseObject umlInterfaces\n{\numlProps\n}\numlCollectionClasses";
+        private const string _classEasyCollectionTemplate =
+            $"public class umlClassNameEasyEntry : EasyCollectionEntry<umlL, umlR> "+"{}\n";
 
         public EntityParser(string entity)
         {
             Entity = entity;
         }
+
         public string Entity { get; private set; }
 
         public override string ToString()
         {
-            var propPattern = PatternParts.ToString(PatternParts.propertyPatternParts);
+            var currentClassName = RegexUtil.GetInnerGroupFromUml(Entity, PatternParts.entityPatternParts, "object_name");
+            var innerArray = Regex.Matches(Entity, PatternParts.ToString(PatternParts.propertyPatternParts)).Select(s => new PropertyParser(s.Value));
 
-            var innerArray = Regex.Matches(Entity, propPattern).Select(s => new PropertyParser(s.Value).ToString());
+            var classEasyCollection = "";
+            foreach (var item in innerArray)
+            {
+                if (item.IsNeedToEntryCollection )
+                {
+                    classEasyCollection += _classEasyCollectionTemplate
+                        .Replace("umlClassName", item.Type)
+                        .Replace("umlR", item.Type)
+                        .Replace("umlL", currentClassName);
+                }
+            }
 
             return _classTemplate
-              .Replace("umlClassName", GetInnerGroupFromUml("object_name"))
-              .Replace("umlInterfaces", GetInnerGroupFromUml("interfaces"))
+              .Replace("umlCollectionClasses", classEasyCollection)
+              .Replace("umlClassName", currentClassName)
+              .Replace("umlInterfaces", RegexUtil.GetInnerGroupFromUml(Entity, PatternParts.entityPatternParts, "interfaces"))
               .Replace("umlProps", string.Join(Environment.NewLine, innerArray));
-        }
-
-        protected string GetInnerGroupFromUml(string groupName)
-        {
-            return Regex.Match(Entity, PatternParts.ToString(PatternParts.entityPatternParts)).Groups[groupName].Value;
         }
     }
 }

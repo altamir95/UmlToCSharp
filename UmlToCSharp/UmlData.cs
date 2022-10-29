@@ -33,8 +33,8 @@ entity DocumentType <Тип документа> <<Lookup>> {
 }
 
 enum DocumentStatus <Статус документа> {
-Active,
-Canceled,
+Active
+Canceled
 }
 
 note left of Document::Creator 

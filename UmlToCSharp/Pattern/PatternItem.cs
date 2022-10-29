@@ -12,5 +12,10 @@ namespace UmlToCSharp.Pattern
 
         public Regex Pattern { get; private set; }
         public string Message { get; private set; }
+
+        public override string ToString()
+        {
+            return Pattern.ToString();
+        }
     }
 }

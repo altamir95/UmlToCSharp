@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using UmlToCSharp.Pattern;
+using UmlToCSharp.Utils;
 
 namespace UmlToCSharp.Parsers
 {
@@ -16,20 +17,22 @@ namespace UmlToCSharp.Parsers
         public string Comment { get; set; }
         public bool ReadOnly { get; set; }
         public bool Required { get; set; }
+        public bool IsNeedToEntryCollection { get; set; }
         public List<string> Attributes { get; set; } = new List<string>();
 
         private void SetPropsFromUml(string umlProp)
         {
             var propMatch = Regex.Match(input: umlProp, pattern: PatternParts.ToString(PatternParts.propertyPatternParts));
 
+
             Name = propMatch.Groups["object_name"].Value;
             Comment = propMatch.Groups["comment"].Value;
-
             ReadOnly = propMatch.Groups["read_only"].Value != "+";
             Required = propMatch.Groups["required"].Value == "*";
-
+            var t = new TypeConvertor(propMatch.Groups["prop_type"].Value);
+            Type = t.CSharpType;
+            IsNeedToEntryCollection = t.IsEnumOrEntity && t.IsArray;
             SetAttributes(propMatch.Groups["prop_type"].Value);
-            SetType(propMatch.Groups["prop_type"].Value);
         }
 
         private void SetAttributes(string typeInUml)
@@ -62,18 +65,6 @@ namespace UmlToCSharp.Parsers
                     break;
             }
         }
-
-        private void SetType(string typeInUml) => Type = typeInUml switch
-        {
-            var _ when Regex.IsMatch(typeInUml, @"string(\[([0-9]+)\])?") => "string",
-            var _ when Regex.IsMatch(typeInUml, @"text") => "string",
-            var _ when Regex.IsMatch(typeInUml, @"bool") => "bool",
-            var _ when Regex.IsMatch(typeInUml, @"number") => "int",
-            var _ when Regex.IsMatch(typeInUml, @"double") => "double",
-            var _ when Regex.IsMatch(typeInUml, @"Location") => "Location",
-            var _ when Regex.IsMatch(typeInUml, @"file(\[])?") => "string",
-            _ => typeInUml
-        };
 
         public override string ToString()
         {

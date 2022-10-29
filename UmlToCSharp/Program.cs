@@ -25,8 +25,12 @@ Canceled
 }";
 
 
-//var umlData = new UmlData();
-//umlData.EntityInfo();
+var umlData = new UmlData();
+umlData.EntityInfo();
+
+
+
+
 var r = new EntityValidator(t);
 r.IsValid();
 Console.WriteLine(r.Error);

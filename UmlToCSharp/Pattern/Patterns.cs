@@ -47,7 +47,7 @@
             },
             { PattternKeys.EnumItems,
                 new (
-                    regex: new(@"(?<enum_item>[A-Za-z0-9]+\s*\n)"),
+                    regex: new(@"(?<enum_item>[A-Za-z0-9]+\s*)\n"),
                     message: "Объект пуст")
             },
 
@@ -64,7 +64,7 @@
 
             { PattternKeys.PropReadOnlyState,
                 new (
-                    regex: new(@"(?<read_only>^(\+|\-))"),
+                    regex: new(@"(?<read_only>(\+|\-))"),
                     message: "Поле должно наинаться с указателяна статус 'ReadOnly', это символы: +, -.")
             },
             { PattternKeys.PropRequiredState,
