@@ -8,7 +8,7 @@ using UmlToCSharp.Parsers;
 
 namespace UmlToCSharp
 {
-    public class UmlData
+    public class Uml
     {
         private const string _testUmlInput = 
 @"entity Document <Документ> <<Lookup, Workflow>> {
@@ -46,7 +46,7 @@ Document::Type --> DocumentType
 Document::Status ..> DocumentStatus
 Document::Items *- DocumentItem";
 
-        public UmlData(string input = _testUmlInput)
+        public Uml(string input = _testUmlInput)
         {
             Input = input;
             SetNodes();
@@ -55,23 +55,34 @@ Document::Items *- DocumentItem";
         public string Input { get; set; }
 
         public IReadOnlyCollection<string> InputLines { get; private set; }
-        public IReadOnlyCollection<string> Entities { get; private set; }
-        public IReadOnlyCollection<string> Relationships { get; private set; }
-        public IReadOnlyCollection<string> Notes { get; private set; }
-        public IReadOnlyCollection<string> Enums { get; private set; }
+
+        public IReadOnlyCollection<string> EntityUml { get; private set; }
+        public IReadOnlyCollection<string> RelationshipUml { get; private set; }
+        public IReadOnlyCollection<string> NoteUml { get; private set; }
+        public IReadOnlyCollection<string> EnumUml { get; private set; }
+
+        public string EntityCSharp { get; set; }
+        public string EnumCSharp { get; set; }
+
+        public string File { get; set; }
 
         private void SetNodes()
         {
-            Entities = Regex.Matches(input: Input, pattern: "entity([^{]+){([^}]+)}").Select(v => v.Value).ToList();
-            Relationships = Regex.Matches(input: Input, pattern: "(.+)::(.+)").Select(v => v.Value).ToList();
-            Notes = Regex.Matches(input: Input, pattern: "(.+)::(.+)(-->|..>|\\*-)(.+)").Select(v => v.Value).ToList();
-            Enums = Regex.Matches(input: Input, pattern: "enum([^{]+){([^}]+)}").Select(v => v.Value).ToList();
+            EntityUml = Regex.Matches(input: Input, pattern: "entity([^{]+){([^}]+)}").Select(v => v.Value).ToList();
+            RelationshipUml = Regex.Matches(input: Input, pattern: "(.+)::(.+)").Select(v => v.Value).ToList();
+            NoteUml = Regex.Matches(input: Input, pattern: "(.+)::(.+)(-->|..>|\\*-)(.+)").Select(v => v.Value).ToList();
+            EnumUml = Regex.Matches(input: Input, pattern: "enum([^{]+){([^}]+)}").Select(v => v.Value).ToList();
+
+            EntityCSharp = string.Join(Environment.NewLine, EntityUml.Select(e => new EntityParser(e)));
+            EnumCSharp = string.Join(Environment.NewLine, EnumUml.Select(e => new EnumParser(e)));
+
+            File = string.Join(Environment.NewLine, new[] { EntityCSharp, EnumCSharp });
         }
 
         public void EntityInfo()
         {
-            var res = Entities.Select(e => new EntityParser(e).ToString());
-            var res1 = Enums.Select(e => new EnumParser(e).ToString());
+            var res = EntityUml.Select(e => new EntityParser(e).ToString());
+            var res1 = EnumUml.Select(e => new EnumParser(e).ToString());
             foreach (var item in res)
             {
                 Console.WriteLine(item);
@@ -82,5 +93,9 @@ Document::Items *- DocumentItem";
             };
         }
 
+        public override string ToString()
+        {
+            return File;
+        }
     }
 }

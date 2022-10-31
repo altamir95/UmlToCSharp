@@ -17,7 +17,7 @@ namespace UmlToCSharp.Validators
                 if (!string.IsNullOrEmpty(Error))
                     LoopInPatterns(prop, PatternParts.propertyPatternParts);
 
-            return !string.IsNullOrEmpty(Error);
+            return string.IsNullOrEmpty(Error);
         }
     }
 }

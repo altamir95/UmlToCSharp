@@ -25,7 +25,7 @@ Canceled
 }";
 
 
-var umlData = new UmlData();
+var umlData = new Uml();
 umlData.EntityInfo();
 
 

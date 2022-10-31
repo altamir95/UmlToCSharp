@@ -13,8 +13,7 @@ namespace UmlToCSharp.Parsers
     public class EntityParser
     {
         private const string _classTemplate = "public class umlClassName : BaseObject umlInterfaces\n{\numlProps\n}\numlCollectionClasses";
-        private const string _classEasyCollectionTemplate =
-            $"public class umlClassNameEasyEntry : EasyCollectionEntry<umlL, umlR> "+"{}\n";
+        private const string _classEasyCollectionTemplate = $"public class umlClassNameEasyEntry : EasyCollectionEntry<umlL, umlR> " + "{}\n";
 
         public EntityParser(string entity)
         {
@@ -31,7 +30,7 @@ namespace UmlToCSharp.Parsers
             var classEasyCollection = "";
             foreach (var item in innerArray)
             {
-                if (item.IsNeedToEntryCollection )
+                if (item.IsNeedToEntryCollection)
                 {
                     classEasyCollection += _classEasyCollectionTemplate
                         .Replace("umlClassName", item.Type)

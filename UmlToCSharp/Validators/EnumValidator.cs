@@ -8,7 +8,7 @@ using UmlToCSharp.Pattern;
 
 namespace UmlToCSharp.Validators
 {
-    internal class EnumValidator : BaseUmlValidator
+    public class EnumValidator : BaseUmlValidator
     {
         public EnumValidator(string uml) : base(uml)
         {
